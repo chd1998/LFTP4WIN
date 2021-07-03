@@ -44,7 +44,7 @@ set CYGWIN_PACKAGES=wget,ca-certificates,gnupg,bsdtar,bash-completion,curl,lftp,
 set INSTALL_LFTP4WIN_CORE=yes
 
 :: change the URL to the closest mirror https://cygwin.com/mirrors.html
-set CYGWIN_MIRROR=https://cygwin.mirror.uk.sargasso.net/
+set CYGWIN_MIRROR=https://www.mirrorservice.org/sites/sourceware.org/pub/cygwin/
 
 :: one of: auto,64,32 - specifies if 32 or 64 bit version should be installed or automatically detected based on current OS architecture
 set CYGWIN_ARCH=auto
@@ -250,6 +250,8 @@ echo.
     echo #
     echo ## Map Current Windows User to root user
     echo #
+	echo unset HISTFILE
+	echo #
     echo USER_SID="$(mkpasswd -c | cut -d':' -f 5)"
     echo if ! grep -F "$USER_SID" /etc/passwd ^&^>/dev/null; then
     echo     echo "Mapping Windows user '$USER_SID' to cygwin '$USERNAME' in /etc/passwd..."
@@ -288,6 +290,8 @@ echo.
     echo ## Installing apt-cyg package manager to home folder ~/bin
     echo #
     echo curl -sL https://raw.githubusercontent.com/kou1okada/apt-cyg/master/apt-cyg ^> ~/bin/apt-cyg
+    echo #
+	echo set HISTFILE
 ) > "%Init_sh%" || goto :fail
 
 "%LFTP4WIN_ROOT%\bin\sed" -i 's/\r$//' "%Init_sh%" || goto :fail
@@ -357,7 +361,8 @@ echo.
 del /q "%INSTALL_TEMP%\%CYGWIN_SETUP%" "%LFTP4WIN_ROOT%\Cygwin.bat" "%LFTP4WIN_ROOT%\Cygwin.ico" "%LFTP4WIN_ROOT%\Cygwin-Terminal.ico"
 
 if "%INSTALL_LFTP4WIN_CORE%" == "yes" (
-    del /q "%LFTP4WIN_BASE%\.gitattributes" "%LFTP4WIN_BASE%\README.md" "%LFTP4WIN_BASE%\LICENSE.txt" "%INSTALL_TEMP%\lftp4win.zip"
+    DEL /Q "%LFTP4WIN_BASE%\.gitattributes" "%LFTP4WIN_BASE%\README.md" "%LFTP4WIN_BASE%\LICENSE.txt" "%INSTALL_TEMP%\lftp4win.zip"
+    RMDIR /S /Q "%LFTP4WIN_BASE%\docs"
 )
 
 timeout /T 60
